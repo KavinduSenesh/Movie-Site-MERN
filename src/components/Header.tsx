@@ -2,10 +2,10 @@ import styled from "styled-components";
 import logo from "../assets/logo1.png";
 import {useNavigate} from "react-router-dom";
 
-export default function Header(props){
+export default function Header(props: {login: boolean}){
     const navigate = useNavigate();
     return (
-        <Container>
+        <Container className={"flex a-center j-between"}>
             <div className={"logo"}>
                 <img src={logo} alt={"logo"}/>
             </div>
