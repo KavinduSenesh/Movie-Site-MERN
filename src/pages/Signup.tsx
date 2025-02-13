@@ -37,7 +37,7 @@ export default function Signup() {
         <Container $showPassword={showPassword}>
             <BackgroundImage />
             <div className={"content"}>
-                <Header login />
+                <Header login/>
                 <div className={"body flex column a-center j-center"}>
                     <div className={"text flex column"}>
                         <h1>Unlimited movies, TV shows, and more.</h1>
