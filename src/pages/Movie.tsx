@@ -39,6 +39,7 @@ function Movie() {
                         <button
                             onClick={() => navigate("/player")}
                             className="flex j-center a-center"
+
                         >
                             <FaPlay />
                             Play
