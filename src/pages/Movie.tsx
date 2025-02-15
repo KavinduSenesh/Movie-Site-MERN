@@ -1,17 +1,33 @@
-import {useState } from "react";
+import {useEffect, useState} from "react";
 import styled from "styled-components";
 import Navbar from "../components/Navbar";
 import backgroundImage from "../assets/home2.jpg";
-// import MovieLogo from "../assets/homeTitle.webp";
 import { onAuthStateChanged } from "firebase/auth";
 import { firebaseAuth } from "../utils/firebase-config";
 import { useNavigate } from "react-router-dom";
 import { FaPlay } from "react-icons/fa";
 import { AiOutlineInfoCircle } from "react-icons/ai";
+import {useDispatch} from "react-redux";
+import {useSelector} from "react-redux";
+import {fetchMovies, getGenres} from "../../store";
 
 function Movie() {
     const [isScrolled, setIsScrolled] = useState(false);
     const navigate = useNavigate();
+
+    const  genresLoaded = useSelector((state) => state.movie.genresLoaded);
+
+    const dispatch = useDispatch();
+
+    useEffect(() => {
+        dispatch(getGenres());
+    }, [])
+
+    useEffect(() => {
+        if (genresLoaded) {
+            dispatch(fetchMovies({ type: "all" }));
+        }
+    });
 
     onAuthStateChanged(firebaseAuth, (currentUser) => {
         if (!currentUser) navigate("/login");
