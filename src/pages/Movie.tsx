@@ -1,4 +1,4 @@
-import {useEffect, useState} from "react";
+import { useEffect, useState } from "react";
 import styled from "styled-components";
 import Navbar from "../components/Navbar";
 import backgroundImage from "../assets/home2.jpg";
@@ -7,27 +7,31 @@ import { firebaseAuth } from "../utils/firebase-config";
 import { useNavigate } from "react-router-dom";
 import { FaPlay } from "react-icons/fa";
 import { AiOutlineInfoCircle } from "react-icons/ai";
-import {useDispatch} from "react-redux";
-import {useSelector} from "react-redux";
-import {fetchMovies, getGenres} from "../../store";
+import { useDispatch, useSelector } from "react-redux";
+import { getGenres, fetchMovies } from "../../store";
+import Slider from "../components/Slider.tsx";  // Import fetchMovies
 
 function Movie() {
     const [isScrolled, setIsScrolled] = useState(false);
+    const movies = useSelector((state) => state.movie.movies);
+    const genres = useSelector((state) => state.movie.genres);
+
     const navigate = useNavigate();
-
-    const  genresLoaded = useSelector((state) => state.movie.genresLoaded);
-
     const dispatch = useDispatch();
+
+    // Get state from Redux
+    const { genresLoaded } = useSelector((state: any) => state.movie);
 
     useEffect(() => {
         dispatch(getGenres());
-    }, [])
+    }, [dispatch]);
 
     useEffect(() => {
+        // Fetch movies only after genres are loaded
         if (genresLoaded) {
-            dispatch(fetchMovies({ type: "all" }));
+            dispatch(fetchMovies({ genres, type: 'movie' }));  // Change 'movie' to the type you need
         }
-    });
+    }, [dispatch, genresLoaded]);
 
     onAuthStateChanged(firebaseAuth, (currentUser) => {
         if (!currentUser) navigate("/login");
@@ -48,14 +52,10 @@ function Movie() {
                     className="background-image"
                 />
                 <div className="container">
-                    {/*<div className="logo">*/}
-                    {/*    <img src={MovieLogo} alt="Movie Logo" />*/}
-                    {/*</div>*/}
                     <div className="buttons flex">
                         <button
                             onClick={() => navigate("/player")}
                             className="flex j-center a-center"
-
                         >
                             <FaPlay />
                             Play
@@ -67,57 +67,59 @@ function Movie() {
                     </div>
                 </div>
             </div>
+            <Slider movies={movies}/>
         </Container>
     );
 }
 
 const Container = styled.div`
-  background-color: black;
-  .hero {
-    position: relative;
-    .background-image {
-      filter: brightness(60%);
-    }
-    img {
-      height: 100vh;
-      width: 100vw;
-    }
-    .container {
-      position: absolute;
-      bottom: 5rem;
-      .logo {
+    background-color: black;
+    .hero {
+        position: relative;
+        .background-image {
+            filter: brightness(60%);
+        }
         img {
-          width: 100%;
-          height: 100%;
-          margin-left: 5rem;
+            height: 100vh;
+            width: 100vw;
         }
-      }
-      .buttons {
-        margin: 5rem;
-        gap: 2rem;
-        button {
-          font-size: 1.4rem;
-          gap: 1rem;
-          border-radius: 0.2rem;
-          padding: 0.5rem;
-          padding-left: 2rem;
-          padding-right: 2.4rem;
-          border: none;
-          cursor: pointer;
-          transition: 0.2s ease-in-out;
-          &:hover {
-            opacity: 0.8;
-          }
-          &:nth-of-type(2) {
-            background-color: rgba(109, 109, 110, 0.7);
-            color: white;
-            svg {
-              font-size: 1.8rem;
+        .container {
+            position: absolute;
+            bottom: 5rem;
+            .logo {
+                img {
+                    width: 100%;
+                    height: 100%;
+                    margin-left: 5rem;
+                }
             }
-          }
+            .buttons {
+                margin: 5rem;
+                gap: 2rem;
+                button {
+                    font-size: 1.4rem;
+                    gap: 1rem;
+                    border-radius: 0.2rem;
+                    padding: 0.5rem;
+                    padding-left: 2rem;
+                    padding-right: 2.4rem;
+                    border: none;
+                    cursor: pointer;
+                    transition: 0.2s ease-in-out;
+                    &:hover {
+                        opacity: 0.8;
+                    }
+                    &:nth-of-type(2) {
+                        background-color: rgba(109, 109, 110, 0.7);
+                        color: white;
+                        svg {
+                            font-size: 1.8rem;
+                        }
+                    }
+                }
+            }
         }
-      }
     }
-  }
 `;
+
 export default Movie;

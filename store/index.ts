@@ -1,6 +1,6 @@
-import {configureStore, createAsyncThunk, createSlice, PayloadAction,} from "@reduxjs/toolkit";
+import { configureStore, createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import axios from "axios";
-import {API_KEY, TMDB_BASE_URL} from "../src/utils/constants.ts";
+import { API_KEY, TMDB_BASE_URL } from "../src/utils/constants";
 
 interface Genre {
     id: number;
@@ -29,20 +29,16 @@ const initialState: MovieState = {
 export const getGenres = createAsyncThunk<Genre[]>(
     "movie/genres",
     async () => {
-        const {
-            data: { genres },
+        const { data: { genres }
         } = await axios.get(
-            `${TMDB_BASE_URL}/genre/movie/list?api_key=${API_KEY}`
+            "https://api.themoviedb.org/3/genre/movie/list?api_key=e5a20ef29dab251e5cf834431dc4a8d0"
         );
+        console.log(genres);
         return genres;
     }
 );
 
-const createArrayFromRawData = (
-    array: any[],
-    moviesArray: Movie[],
-    genres: Genre[]
-): void => {
+const createArrayFromRawData = (array, moviesArray: Movie[], genres: Genre[]) => {
     array.forEach((movie) => {
         const movieGenres: string[] = [];
         movie.genre_ids.forEach((genre: number) => {
@@ -59,71 +55,65 @@ const createArrayFromRawData = (
     });
 };
 
-const getRawData = async (
-    api: string,
-    genres: Genre[],
-    paging: boolean = false
-): Promise<Movie[]> => {
+const getRawData = async (api: string, genres: Genre[], paging = false): Promise<Movie[]> => {
     const moviesArray: Movie[] = [];
     for (let i = 1; moviesArray.length < 60 && i < 10; i++) {
-        const {
-            data: { results },
-        } = await axios.get<{ results: any[] }>(`${api}${paging ? `&page=${i}` : ""}`);
+        const { data: { results } } = await axios.get(`${api}${paging ? `&page=${i}` : ""}`);
         createArrayFromRawData(results, moviesArray, genres);
     }
     return moviesArray;
 };
 
-interface GenreType {
-    genre: string;
+interface FetchDataByGenreArgs {
+    genre: number;
     type: string;
 }
 
-export const fetchDataByGenre = createAsyncThunk<Movie[], GenreType>(
+export const fetchDataByGenre = createAsyncThunk<Movie[], FetchDataByGenreArgs>(
     "movie/genre",
     async ({ genre, type }, thunkAPI) => {
-        const {
-            movie: { genres },
-        } = thunkAPI.getState() as { movie: MovieState };
+        const { movie: { genres } } = thunkAPI.getState() as { movie: MovieState };
         return getRawData(
-            `https://api.themoviedb.org/3/discover/${type}?api_key=3d39d6bfe362592e6aa293f01fbcf9b9&with_genres=${genre}`,
+            `https://api.themoviedb.org/3/discover/${type}?api_key=e5a20ef29dab251e5cf834431dc4a8d0&with_genres=${genre}`,
             genres
         );
     }
 );
 
-export const fetchMovies = createAsyncThunk<Movie[], { type: string }>(
+interface FetchMoviesArgs {
+    type: string;
+}
+
+export const fetchMovies = createAsyncThunk<Movie[], FetchMoviesArgs>(
     "movie/trending",
     async ({ type }, thunkAPI) => {
-        const {
-            movie: { genres },
-        } = thunkAPI.getState() as { movie: MovieState };
-        const data = await getRawData(
+        const { movie: { genres } } = thunkAPI.getState() as { movie: MovieState };
+        console.log("Genres in fetchMovies:", genres); // Log genres here.
+        return getRawData(
             `${TMDB_BASE_URL}/trending/${type}/week?api_key=${API_KEY}`,
             genres,
             true
         );
-        return data;
     }
 );
-
 
 export const getUsersLikedMovies = createAsyncThunk<Movie[], string>(
     "movie/getLiked",
     async (email) => {
-        const {
-            data: { movies },
-        } = await axios.get(`http://localhost:5000/api/user/liked/${email}`);
+        const { data: { movies } } = await axios.get(`http://localhost:5000/api/user/liked/${email}`);
         return movies;
     }
 );
 
-export const removeMovieFromLiked = createAsyncThunk<Movie[], { movieId: number; email: string }>(
+interface RemoveMovieFromLikedArgs {
+    movieId: number;
+    email: string;
+}
+
+export const removeMovieFromLiked = createAsyncThunk<Movie[], RemoveMovieFromLikedArgs>(
     "movie/deleteLiked",
     async ({ movieId, email }) => {
-        const {
-            data: { movies },
-        } = await axios.put("http://localhost:5000/api/user/remove", {
+        const { data: { movies } } = await axios.put("http://localhost:5000/api/user/remove", {
             email,
             movieId,
         });
@@ -160,3 +150,5 @@ export const store = configureStore({
         movie: MovieSlice.reducer,
     },
 });
+
+// export const { setGenres, setMovies } = MovieSlice.actions;
