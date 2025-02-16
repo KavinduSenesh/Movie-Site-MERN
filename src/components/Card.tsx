@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import {useState} from "react";
+import React, {useState} from "react";
 import {useNavigate} from "react-router-dom";
 import video from "../assets/Disney.mp4";
 import {IoPlayCircleSharp} from "react-icons/io5";
@@ -9,7 +9,17 @@ import {AiOutlinePlus} from "react-icons/ai";
 import {BiChevronDown} from "react-icons/bi";
 import {useDispatch} from "react-redux";
 
-export default function Card({movieData, isLiked = false}){
+type CardProps = {
+    movieData: {
+        id: number;
+        name: string;
+        image: string;
+        genres: string[];
+    };
+    isLiked?: boolean;
+};
+
+export default React.memo(function Card({movieData, isLiked = false}: CardProps){
     const [isHovered, setIsHovered] = useState(false);
     const navigate= useNavigate();
     const dispatch = useDispatch();
@@ -72,8 +82,8 @@ export default function Card({movieData, isLiked = false}){
                 )
             }
         </Container>
-    )
-}
+    );
+});
 
 const Container = styled.div`
     max-width: 230px;

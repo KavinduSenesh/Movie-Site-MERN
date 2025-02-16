@@ -33,7 +33,6 @@ export const getGenres = createAsyncThunk<Genre[]>(
         } = await axios.get(
             "https://api.themoviedb.org/3/genre/movie/list?api_key=e5a20ef29dab251e5cf834431dc4a8d0"
         );
-        console.log(genres);
         return genres;
     }
 );
@@ -88,7 +87,6 @@ export const fetchMovies = createAsyncThunk<Movie[], FetchMoviesArgs>(
     "movie/trending",
     async ({ type }, thunkAPI) => {
         const { movie: { genres } } = thunkAPI.getState() as { movie: MovieState };
-        console.log("Genres in fetchMovies:", genres); // Log genres here.
         return getRawData(
             `${TMDB_BASE_URL}/trending/${type}/week?api_key=${API_KEY}`,
             genres,

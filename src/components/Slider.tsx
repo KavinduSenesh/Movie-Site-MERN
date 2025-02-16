@@ -1,7 +1,12 @@
 import CardSlider from "./CardSliders.tsx";
 import styled from "styled-components";
+import React from "react";
 
-export default function Slider({ movies }) {
+type SliderProps = {
+    movies: { id: number; name: string }[];
+}
+
+export default React.memo(function Slider({ movies }: SliderProps) {
     const getMoviesFromRange = (from, to) => {
         return movies.slice(from, to);
     };
@@ -15,6 +20,6 @@ export default function Slider({ movies }) {
             <CardSlider data={getMoviesFromRange(50, 60)} title="Must Watch" />
         </Container>
     );
-}
+})
 
 const Container = styled.div``;
