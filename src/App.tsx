@@ -5,6 +5,7 @@ import Movie from "./pages/Movie.tsx";
 import Player from "./pages/player.tsx";
 import MoviePage from "./pages/MoviePage.tsx";
 import TVSeriesPage from "./pages/TVSeriesPage.tsx";
+import LikedPage from "./pages/LikedPage.tsx";
 
 export default function app(){
     return (
@@ -16,6 +17,7 @@ export default function app(){
                 <Route path={"player"} element={<Player/>}></Route>
                 <Route path={"/movie"} element={<MoviePage/>}/>
                 <Route path={"/series"} element={<TVSeriesPage/>}/>
+                <Route path={"/list"} element={<LikedPage/>}/>
             </Routes>
         </BrowserRouter>
     );

@@ -11,6 +11,7 @@ import {useDispatch} from "react-redux";
 import {firebaseAuth} from "../utils/firebase-config.ts";
 import {onAuthStateChanged} from "firebase/auth";
 import axios from "axios";
+import {removeMovieFromLiked} from "../../store";
 
 type CardProps = {
     movieData: {
@@ -79,7 +80,13 @@ export default React.memo(function Card({movieData, isLiked = false}: CardProps)
                                         isLiked ? (
                                             <BsCheck
                                                 title={"Remove from list"}
-                                            /> ) : (
+                                                onClick={() =>
+                                                    dispatch(
+                                                        removeMovieFromLiked({ movieId: movieData.id, email })
+                                                    )
+                                                }
+                                            />
+                                        ) : (
                                             <AiOutlinePlus
                                                 title={"Add to list"}
                                                 onClick={addToList}

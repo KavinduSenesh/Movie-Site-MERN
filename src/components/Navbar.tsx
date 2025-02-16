@@ -17,7 +17,7 @@ export default function Navbar({ isScrolled } : NavbarProps) {
         { name: "Home", link: "/" },
         { name: "TV Shows", link: "/series" },
         { name: "Movies", link: "/movie" },
-        { name: "My List", link: "/myList" },
+        { name: "My List", link: "/list" },
     ];
 
     return (
