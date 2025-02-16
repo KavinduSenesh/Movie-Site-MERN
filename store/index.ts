@@ -3,8 +3,8 @@ import axios from "axios";
 import { API_KEY, TMDB_BASE_URL } from "../src/utils/constants";
 
 interface Genre {
-    id: number;
-    name: string;
+    id: any;
+    name: any;
 }
 
 interface Movie {

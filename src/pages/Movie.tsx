@@ -15,11 +15,8 @@ function Movie() {
     const [isScrolled, setIsScrolled] = useState(false);
     const movies = useSelector((state) => state.movie.movies);
     const genres = useSelector((state) => state.movie.genres);
-
     const navigate = useNavigate();
     const dispatch = useDispatch();
-
-    // Get state from Redux
     const { genresLoaded } = useSelector((state: any) => state.movie);
 
     useEffect(() => {
@@ -29,7 +26,7 @@ function Movie() {
     useEffect(() => {
         // Fetch movies only after genres are loaded
         if (genresLoaded) {
-            dispatch(fetchMovies({ genres, type: 'movie' }));  // Change 'movie' to the type you need
+            dispatch(fetchMovies({ genres, type: 'all' }));  // Change 'movie' to the type you need
         }
     }, [dispatch, genresLoaded]);
 
