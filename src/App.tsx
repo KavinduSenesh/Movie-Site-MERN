@@ -4,6 +4,7 @@ import Signup from "./pages/Signup.tsx";
 import Movie from "./pages/Movie.tsx";
 import Player from "./pages/player.tsx";
 import MoviePage from "./pages/MoviePage.tsx";
+import TVSeriesPage from "./pages/TVSeriesPage.tsx";
 
 export default function app(){
     return (
@@ -13,7 +14,8 @@ export default function app(){
                 <Route path={"/signup"} element={<Signup/>}></Route>
                 <Route path={"/"} element={<Movie/>}></Route>
                 <Route path={"player"} element={<Player/>}></Route>
-                <Route path={"/moviePage"} element={<MoviePage/>}/>
+                <Route path={"/movie"} element={<MoviePage/>}/>
+                <Route path={"/series"} element={<TVSeriesPage/>}/>
             </Routes>
         </BrowserRouter>
     );

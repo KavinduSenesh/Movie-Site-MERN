@@ -15,8 +15,8 @@ export default function Navbar({ isScrolled } : NavbarProps) {
     const [inputHover, setInputHover] = useState(false);
     const links = [
         { name: "Home", link: "/" },
-        { name: "TV Shows", link: "/tv" },
-        { name: "Movies", link: "/moviePage" },
+        { name: "TV Shows", link: "/series" },
+        { name: "Movies", link: "/movie" },
         { name: "My List", link: "/myList" },
     ];
 
