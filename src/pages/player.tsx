@@ -1,6 +1,6 @@
 import styled from "styled-components";
 import { BsArrowLeft } from "react-icons/bs";
-import video from "../assets/video.mp4";
+import video from "../assets/TransformersOne.mp4";
 import {useNavigate} from "react-router-dom";
 
 export default function Player(){

@@ -1,7 +1,7 @@
 import styled from "styled-components";
 import {useState} from "react";
 import {useNavigate} from "react-router-dom";
-import video from "../assets/video.mp4";
+import video from "../assets/Disney.mp4";
 import {IoPlayCircleSharp} from "react-icons/io5";
 import {RiThumbDownFill, RiThumbUpFill} from "react-icons/ri";
 import {BsCheck} from "react-icons/bs";
@@ -134,13 +134,13 @@ const Container = styled.div`
                 cursor: pointer;
                 transition: 0.3s ease-in-out;
                 &:hover{
-                    opacity: #b8b8b8;
+                    color: #b8b8b8;
                 }
             }
         }
         .genres{
             ul{
-                gap: 1rem;
+                 gap: 1rem;
                 li{
                     padding-right: 0.7rem;
                     &:first-of-type{
