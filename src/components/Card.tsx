@@ -8,6 +8,9 @@ import {BsCheck} from "react-icons/bs";
 import {AiOutlinePlus} from "react-icons/ai";
 import {BiChevronDown} from "react-icons/bi";
 import {useDispatch} from "react-redux";
+import {firebaseAuth} from "../utils/firebase-config.ts";
+import {onAuthStateChanged} from "firebase/auth";
+import axios from "axios";
 
 type CardProps = {
     movieData: {
@@ -23,6 +26,24 @@ export default React.memo(function Card({movieData, isLiked = false}: CardProps)
     const [isHovered, setIsHovered] = useState(false);
     const navigate= useNavigate();
     const dispatch = useDispatch();
+    const [email, setEmail] = useState("");
+
+    onAuthStateChanged(firebaseAuth, (currentUser) => {
+        if (currentUser) {
+            setEmail(currentUser.email);
+        } else navigate("/login");
+    });
+
+    const addToList = async () => {
+        try {
+            await axios.post("http://localhost:5000/api/user/add", {
+                email,
+                data: movieData,
+            });
+        } catch (error) {
+            console.error(error);
+        }
+    };
 
     return(
         <Container
@@ -61,6 +82,7 @@ export default React.memo(function Card({movieData, isLiked = false}: CardProps)
                                             /> ) : (
                                             <AiOutlinePlus
                                                 title={"Add to list"}
+                                                onClick={addToList}
                                             />
                                         )}
                                 </div>
