@@ -1,10 +1,9 @@
 import styled from "styled-components";
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import {useNavigate} from "react-router-dom";
 import video from "../assets/Disney.mp4";
-import {IoPlayCircleSharp} from "react-icons/io5";
 import {RiThumbDownFill, RiThumbUpFill} from "react-icons/ri";
-import {BsCheck} from "react-icons/bs";
+import {BsBookmarkPlus, BsCheck} from "react-icons/bs";
 import {AiOutlinePlus} from "react-icons/ai";
 import {BiChevronDown} from "react-icons/bi";
 import {useDispatch} from "react-redux";
@@ -30,6 +29,9 @@ export default React.memo(function Card({movieData, isLiked = false}: CardProps)
     const [email, setEmail] = useState("");
     const [liked, setLiked] = useState(false);
     const [disliked, setDisliked] = useState(false);
+    const [showAlert, setShowAlert] = useState(false);
+    const [isMounted, setIsMounted] = useState(true);
+    const [isBookmarked, setIsBookmarked] = useState(isLiked);
 
     onAuthStateChanged(firebaseAuth, (currentUser) => {
         if (currentUser) {
@@ -37,12 +39,34 @@ export default React.memo(function Card({movieData, isLiked = false}: CardProps)
         } else navigate("/login");
     });
 
+    useEffect(() => {
+        setIsMounted(false);
+
+        return () => {
+            setIsMounted(true); // Reset the flag when the component mounts again
+        };
+    }, []);
+
+    useEffect(() => {
+        let timer;
+        if (showAlert) {
+            timer = setTimeout(() => {
+                setShowAlert(false);
+            }, 3000);
+        }
+        return () => clearTimeout(timer);
+    }, [showAlert]);
+
     const addToList = async () => {
         try {
             await axios.post("http://localhost:5000/api/user/add", {
                 email,
                 data: movieData,
             });
+            if (isMounted){
+                setIsBookmarked(true);
+                setShowAlert(true);
+            }
         } catch (error) {
             console.error(error);
         }
@@ -106,22 +130,18 @@ export default React.memo(function Card({movieData, isLiked = false}: CardProps)
                                         onClick={handleDislike}
                                         style={{ color: disliked ? "red" : "white", cursor: "pointer" }}
                                     />
-                                    {
-                                        isLiked ? (
-                                            <BsCheck
-                                                title={"Remove from list"}
-                                                onClick={() =>
-                                                    dispatch(
-                                                        removeMovieFromLiked({ movieId: movieData.id, email })
-                                                    )
-                                                }
-                                            />
-                                        ) : (
-                                            <AiOutlinePlus
-                                                title={"Add to list"}
-                                                onClick={addToList}
-                                            />
-                                        )}
+                                    {isBookmarked ? (
+                                        <BsCheck
+                                            title={"Bookmarked"}
+                                            style={{ cursor: "default" }}
+                                        />
+                                    ) : (
+                                        <AiOutlinePlus
+                                            title={"Add to list"}
+                                            onClick={addToList}
+                                            style={{ cursor: "pointer" }}
+                                        />
+                                    )}
                                 </div>
                                 <div className={"info"}>
                                      <BiChevronDown
@@ -143,9 +163,70 @@ export default React.memo(function Card({movieData, isLiked = false}: CardProps)
                     </div>
                 )
             }
+            {showAlert && (
+                <AlertContainer>
+                    <div className="alert-content">
+                        <BsBookmarkPlus className="bookmark-icon" />
+                        <div className="alert-text">
+                            <h4>{movieData.name}</h4>
+                            <p>Added to your list!</p>
+                        </div>
+                    </div>
+                </AlertContainer>
+            )}
         </Container>
     );
 });
+
+const AlertContainer = styled.div`
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: linear-gradient(135deg, rgba(0,0,0,0.9) 0%, rgba(20,20,20,0.95) 100%);
+    border-left: 4px solid #e50914;
+    color: white;
+    padding: 15px 20px;
+    border-radius: 4px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+    min-width: 280px;
+    animation: slideIn 0.3s ease-out forwards;
+    
+    @keyframes slideIn {
+        from {
+            transform: translateX(100%);
+            opacity: 0;
+        }
+        to {
+            transform: translateX(0);
+            opacity: 1;
+        }
+    }
+    
+    .alert-content {
+        display: flex;
+        align-items: center;
+    }
+    
+    .bookmark-icon {
+        font-size: 24px;
+        color: #e50914;
+        margin-right: 15px;
+    }
+    
+    .alert-text {
+        h4 {
+            margin: 0 0 5px 0;
+            font-weight: 600;
+        }
+        
+        p {
+            margin: 0;
+            font-size: 14px;
+            opacity: 0.9;
+        }
+    }
+`;
 
 const Container = styled.div`
     max-width: 230px;
