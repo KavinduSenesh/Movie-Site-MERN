@@ -9,7 +9,8 @@ import { FaPlay } from "react-icons/fa";
 import { AiOutlineInfoCircle } from "react-icons/ai";
 import { useDispatch, useSelector } from "react-redux";
 import { getGenres, fetchMovies } from "../../store";
-import Slider from "../components/Slider.tsx";  // Import fetchMovies
+import Slider from "../components/Slider.tsx";
+import {getMovieDetails} from "../utils/api.ts";  // Import fetchMovies
 
 function Movie() {
     const [isScrolled, setIsScrolled] = useState(false);
@@ -17,7 +18,11 @@ function Movie() {
     const genres = useSelector((state) => state.movie.genres);
     const navigate = useNavigate();
     const dispatch = useDispatch();
+    const [trailer, setTrailer] = useState<string | null>(null);
+
     const { genresLoaded } = useSelector((state: any) => state.movie);
+
+    const TRANSFORMERS_ONE_ID = "698687";
 
     useEffect(() => {
         dispatch(getGenres());
@@ -39,6 +44,17 @@ function Movie() {
         return () => (window.onscroll = null);
     };
 
+    useEffect(() => {
+        const fetchTrailer = async () => {
+            const movieData = await getMovieDetails(TRANSFORMERS_ONE_ID);
+            const trailerVideo = movieData.videos.results.find(
+                (video: any) => video.site === "YouTube" && video.type === "Trailer"
+            );
+            setTrailer(trailerVideo ? trailerVideo.key : null);
+        };
+        fetchTrailer();
+    }, []);
+
     return (
         <Container>
             <Navbar isScrolled={isScrolled} />
@@ -51,13 +67,12 @@ function Movie() {
                 <div className="container">
                     <div className="buttons flex">
                         <button
-                            onClick={() => navigate("/player")}
-                            className="flex j-center a-center"
+                            onClick={() => window.open("https://www.youtube.com/watch?v=0rmJXXKDrsM", "_blank")} className="flex j-center a-center"
                         >
                             <FaPlay />
                             Play
                         </button>
-                        <button className="flex j-center a-center">
+                        <button onClick={() => navigate(`/movie/${TRANSFORMERS_ONE_ID}`)} className="flex j-center a-center">
                             <AiOutlineInfoCircle />
                             More Info
                         </button>
