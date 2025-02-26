@@ -7,6 +7,7 @@ export default function MovieDetails() {
     const { id } = useParams<{ id: string }>();
     const [movie, setMovie] = useState<any>(null);
     const [trailer, setTrailer] = useState<string | null>(null);
+    const [showTrailer, setShowTrailer] = useState<boolean>(false);
 
     useEffect(() => {
         const fetchMovie = async () => {
@@ -22,9 +23,8 @@ export default function MovieDetails() {
             }
         };
         fetchMovie();
+        
     }, [id]);
-
-    if (!movie) return <h2>Loading...</h2>;
 
     if (!movie) return <h2>Loading...</h2>;
 

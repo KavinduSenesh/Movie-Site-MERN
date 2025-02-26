@@ -1,10 +1,10 @@
 import { signOut } from "firebase/auth";
-import { useState } from "react";
+import {useEffect, useState} from "react";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
 import logo from "../assets/logo1.png";
 import { firebaseAuth } from "../utils/firebase-config";
-import { FaPowerOff, FaSearch } from "react-icons/fa";
+import {FaPowerOff, FaSearch, FaSignOutAlt} from "react-icons/fa";
 import {searchMovies} from "../utils/api.ts";
 
 type NavbarProps = {
@@ -16,6 +16,7 @@ export default function Navbar({ isScrolled } : NavbarProps) {
     const [inputHover, setInputHover] = useState(false);
     const [searchQuery, setSearchQuery] = useState("");
     const [searchResults, setSearchResults] = useState<any[]>([]);
+    const [activeLink, setActiveLink] = useState("Home");
 
     const handleSearch = async (query: string) => {
         setSearchQuery(query);
@@ -34,6 +35,13 @@ export default function Navbar({ isScrolled } : NavbarProps) {
         { name: "My List", link: "/list" },
     ];
 
+    useEffect(() => {
+        // Set active link based on current path
+        const currentPath = window.location.pathname;
+        const current = links.find(link => currentPath === link.link || currentPath.startsWith(link.link + "/"));
+        if (current) setActiveLink(current.name);
+    }, []);
+
     return (
         <Container>
             <nav className={`${isScrolled ? "scrolled" : ""} flex`}>
@@ -44,8 +52,11 @@ export default function Navbar({ isScrolled } : NavbarProps) {
                     <ul className="links flex">
                         {links.map(({ name, link }) => {
                             return (
-                                <li key={name}>
-                                    <Link to={link}>{name}</Link>
+                                <li key={name} className={activeLink === name ? "active" : ""}>
+                                    <Link to={link} onClick={() => setActiveLink(name)}>
+                                        {name}
+                                        {activeLink === name && <div className="underline"></div>}
+                                    </Link>
                                 </li>
                             );
                         })}
@@ -60,12 +71,13 @@ export default function Navbar({ isScrolled } : NavbarProps) {
                                     setShowSearch(false);
                                 }
                             }}
+                            aria-label={"Search"}
                         >
                             <FaSearch />
                         </button>
                         <input
                             type="text"
-                            placeholder="Search"
+                            placeholder="Search for movies or shows..."
                             value={searchQuery}
                             onChange={(e) => handleSearch(e.target.value)}
                             onMouseEnter={() => setInputHover(true)}
@@ -97,8 +109,11 @@ export default function Navbar({ isScrolled } : NavbarProps) {
                                 </div>
                         )}
                     </div>
-                    <button onClick={() => signOut(firebaseAuth)}>
-                        <FaPowerOff />
+                    <button onClick={() => signOut(firebaseAuth)}
+                            className={"logout-btn"}
+                            aria-label={"Logout"}
+                    >
+                        <FaSignOutAlt />
                     </button>
                 </div>
             </nav>
@@ -110,62 +125,108 @@ const Container = styled.div`
     .search-results {
         position: absolute;
         top: 100%;
-        left: 0;
-        width: 250px;
-        background-color: black;
-        border: 1px solid white;
+        right: 0;
+        width: 280px;
+        background-color: rgba(15, 15, 15, 0.95);
+        border-radius: 8px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
         z-index: 10;
-        max-height: 300px;
+        max-height: 400px;
         overflow-y: auto;
         display: flex;
         flex-direction: column;
-        gap: 10px;
-        padding: 10px;
+        gap: 8px;
+        padding: 12px;
+        backdrop-filter: blur(10px);
+        transition: all 0.3s ease;
+
+        &::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        &::-webkit-scrollbar-track {
+            background: rgba(37, 34, 34, 0.2);
+            border-radius: 10px;
+        }
+
+        &::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+        }
     }
 
     .search-item {
         display: flex;
         text-decoration: none;
         color: white;
-        transition: background-color 0.3s ease-in-out;
+        transition: all 0.2s ease-in-out;
+        border-radius: 6px;
+        padding: 6px;
     }
 
     .search-item:hover {
-        background-color: gray;
+        background-color: rgba(255, 255, 255, 0.1);
+        transform: translateY(-2px);
     }
 
     .movie-card {
         display: flex;
         align-items: center;
-        gap: 10px;
+        gap: 12px;
+        width: 100%;
     }
 
     .movie-card img {
         width: 50px;
         height: 75px;
         object-fit: cover;
-        border-radius: 5px;
+        border-radius: 6px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+        transition: transform 0.2s ease;
+    }
+
+    .no-poster {
+        width: 50px;
+        height: 75px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #2a2a2a;
+        border-radius: 6px;
+        font-size: 10px;
+        color: #aaa;
     }
 
     .movie-info {
         display: flex;
         flex-direction: column;
+        flex: 1;
     }
 
     .movie-info h4 {
         font-size: 14px;
         margin: 0;
+        font-weight: 500;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
     }
 
     .movie-info p {
         font-size: 12px;
-        margin: 0;
-        color: yellow;
+        margin: 4px 0 0;
+        color: #FFD700;
+        font-weight: 600;
     }
 
     .scrolled {
-        background-color: black;
+        background-color: rgba(10, 10, 10, 0.95);
+        backdrop-filter: blur(10px);
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
     }
+
     nav {
         position: sticky;
         top: 0;
@@ -178,38 +239,103 @@ const Container = styled.div`
         padding: 0 4rem;
         align-items: center;
         transition: 0.3s ease-in-out;
+
+        &:not(.scrolled) {
+            background: linear-gradient(to bottom, rgba(0, 0, 0, 0.7) 0%, rgba(0, 0, 0, 0) 100%);
+        }
+
         .left {
-            gap: 2rem;
+            gap: 2.5rem;
+
             .brand {
                 img {
                     height: 4rem;
+                    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.5));
+                    transition: transform 0.3s ease;
+
+                    &:hover {
+                        transform: scale(1.05);
+                    }
                 }
             }
+
             .links {
                 list-style-type: none;
-                gap: 2rem;
+                gap: 2.5rem;
+
                 li {
+                    position: relative;
+                    transition: transform 0.2s ease;
+
+                    &:hover {
+                        transform: translateY(-2px);
+                    }
+
+                    &.active a {
+                        font-weight: 600;
+                    }
+
                     a {
                         color: white;
                         text-decoration: none;
+                        font-size: 1.05rem;
+                        letter-spacing: 0.3px;
+                        padding: 0.5rem 0;
+                        transition: color 0.3s ease;
+                        display: flex;
+                        flex-direction: column;
+                        align-items: center;
+
+                        &:hover {
+                            color: #f34242;
+                        }
+
+                        .underline {
+                            height: 3px;
+                            width: 100%;
+                            background: #f34242;
+                            position: absolute;
+                            bottom: -8px;
+                            left: 0;
+                            border-radius: 3px;
+                        }
                     }
                 }
             }
         }
+
         .right {
-            gap: 1rem;
-            button {
+            gap: 1.5rem;
+
+            .logout-btn {
                 background-color: transparent;
                 border: none;
                 cursor: pointer;
+                transition: all 0.3s ease;
+                width: 40px;
+                height: 40px;
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+
+                &:hover {
+                    background-color: rgba(243, 66, 66, 0.1);
+                    transform: translateY(-2px);
+                }
+
                 &:focus {
                     outline: none;
+                    box-shadow: 0 0 0 2px rgba(243, 66, 66, 0.5);
                 }
+
                 svg {
                     color: #f34242;
-                    font-size: 1.2rem;
+                    font-size: 1.3rem;
+                    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
                 }
             }
+
             .search {
                 display: flex;
                 gap: 0.4rem;
@@ -217,17 +343,37 @@ const Container = styled.div`
                 justify-content: center;
                 padding: 0.2rem;
                 padding-left: 0.5rem;
+                border-radius: 30px;
+                transition: all 0.3s ease;
+                position: relative;
+
                 button {
                     background-color: transparent;
                     border: none;
+                    cursor: pointer;
+                    width: 40px;
+                    height: 40px;
+                    border-radius: 50%;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    transition: all 0.3s ease;
+
+                    &:hover {
+                        background-color: rgba(255, 255, 255, 0.1);
+                    }
+
                     &:focus {
                         outline: none;
                     }
+
                     svg {
                         color: white;
-                        font-size: 1.2rem;
+                        font-size: 1.3rem;
+                        filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
                     }
                 }
+
                 input {
                     width: 0;
                     opacity: 0;
@@ -236,20 +382,50 @@ const Container = styled.div`
                     background-color: transparent;
                     border: none;
                     color: white;
+                    font-size: 0.95rem;
+
+                    &::placeholder {
+                        color: rgba(255, 255, 255, 0.6);
+                    }
+
                     &:focus {
                         outline: none;
                     }
                 }
             }
+
             .show-search {
-                border: 1px solid white;
+                border: 1px solid rgba(255, 255, 255, 0.2);
                 background-color: rgba(0, 0, 0, 0.6);
+                backdrop-filter: blur(10px);
+                box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+
                 input {
-                    width: 100%;
+                    width: 200px;
                     opacity: 1;
                     visibility: visible;
-                    padding: 0.3rem;
+                    padding: 0.6rem;
                 }
+
+                button {
+                    &:hover {
+                        background-color: rgba(255, 255, 255, 0.05);
+                    }
+                }
+            }
+        }
+    }
+
+    @media (max-width: 768px) {
+        nav {
+            padding: 0 2rem;
+
+            .left .links {
+                gap: 1.5rem;
+            }
+
+            .right .show-search input {
+                width: 150px;
             }
         }
     }
