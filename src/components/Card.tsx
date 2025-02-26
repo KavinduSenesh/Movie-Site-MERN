@@ -28,6 +28,8 @@ export default React.memo(function Card({movieData, isLiked = false}: CardProps)
     const navigate= useNavigate();
     const dispatch = useDispatch();
     const [email, setEmail] = useState("");
+    const [liked, setLiked] = useState(false);
+    const [disliked, setDisliked] = useState(false);
 
     onAuthStateChanged(firebaseAuth, (currentUser) => {
         if (currentUser) {
@@ -46,6 +48,24 @@ export default React.memo(function Card({movieData, isLiked = false}: CardProps)
         }
     };
 
+    const handleLike = () => {
+        if (!liked) {
+            setLiked(true);
+            setDisliked(false);
+        } else {
+            setLiked(false);
+        }
+    };
+
+    const handleDislike = () => {
+        if (!disliked) {
+            setDisliked(true);
+            setLiked(false);
+        } else {
+            setDisliked(false);
+        }
+    };
+
     return(
         <Container
             onMouseEnter={() => setIsHovered(true)}
@@ -60,22 +80,32 @@ export default React.memo(function Card({movieData, isLiked = false}: CardProps)
                         <div className={"image-video-container"}>
                             <img src={`https://image.tmdb.org/t/p/w500${movieData.image}`}
                                  alt="show"
-                                 onClick={() => navigate("/player")}
+                                 onClick={() => navigate(`/movie/${movieData.id}`)}
                             />
                             <video src={video} autoPlay loop muted onClick={() => navigate("/player")}/>
                         </div>
                         <div className={"info-container flex column"}>
-                            <h3 className={"name"} onClick={() => navigate("/player")}>
+                            <h3 className={"name"}
+                                onClick={() => navigate(`/movie/${movieData.id}`)}>
                                 {movieData.name}
                             </h3>
                             <div className={"icons flex j-between"}>
                                 <div className={"controls flex"}>
-                                    <IoPlayCircleSharp
-                                        title={"play"}
-                                        onClick={() => navigate("/player")}
+                                    {/*<IoPlayCircleSharp*/}
+                                    {/*    title={"play"}*/}
+                                    {/*    onClick={() => navigate("/player")}*/}
+                                    {/*/>*/}
+
+                                    <RiThumbUpFill
+                                        title={"like"}
+                                        onClick={handleLike}
+                                        style={{ color: liked ? "green" : "white", cursor: "pointer" }}
                                     />
-                                    <RiThumbUpFill title={"like"}/>
-                                    <RiThumbDownFill title={"Dislike"}/>
+                                    <RiThumbDownFill
+                                        title={"Dislike"}
+                                        onClick={handleDislike}
+                                        style={{ color: disliked ? "red" : "white", cursor: "pointer" }}
+                                    />
                                     {
                                         isLiked ? (
                                             <BsCheck
@@ -94,7 +124,10 @@ export default React.memo(function Card({movieData, isLiked = false}: CardProps)
                                         )}
                                 </div>
                                 <div className={"info"}>
-                                     <BiChevronDown title={"More info"}/>
+                                     <BiChevronDown
+                                         title={"More info"}
+                                         onClick={() => navigate(`/movie/${movieData.id}`)}
+                                     />
                                 </div>
                             </div>
                             <div className={"genres flex"}>
