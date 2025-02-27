@@ -1,50 +1,87 @@
-# React + TypeScript + Vite
+# Movie-Site-MERN
+ 
+A full-stack **Movie Site** built using the **MERN stack** (MongoDB, Express.js, React.js, Node.js) with **Redux** for state management and **TypeScript** for better code scalability and maintainability.
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## 🚀 Features
+- Browse popular movies fetched from **TMDB API**
+- Filter movies by genre
+- User authentication (login/signup) with JWT
+- Add movies to a personal watchlist
+- Responsive UI using **React + Tailwind CSS**
+- Backend built with **Node.js & Express.js**
+- Database using **MongoDB + Mongoose**
 
-Currently, two official plugins are available:
+## 🛠️ Tech Stack
+### Frontend:
+- React.js (with Redux Toolkit & TypeScript)
+- Tailwind CSS
+- Axios (for API requests)
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+### Backend:
+- Node.js & Express.js
+- MongoDB & Mongoose
 
-## Expanding the ESLint configuration
+## 📦 Installation & Setup
+### Prerequisites
+- Node.js & npm installed
+- MongoDB running locally or using **MongoDB Atlas**
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
-
-- Configure the top-level `parserOptions` property like this:
-
-```js
-export default tseslint.config({
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
+### 1️⃣ Clone the repository
+```bash
+git clone https://github.com/KavinduSenesh/Movie-Site-MERN.git
+cd Movie-Site-MERN
 ```
 
-- Replace `tseslint.configs.recommended` to `tseslint.configs.recommendedTypeChecked` or `tseslint.configs.strictTypeChecked`
-- Optionally add `...tseslint.configs.stylisticTypeChecked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and update the config:
+### 3️⃣ Set up environment variables
 
-```js
-// eslint.config.js
-import react from 'eslint-plugin-react'
-
-export default tseslint.config({
-  // Set the react version
-  settings: { react: { version: '18.3' } },
-  plugins: {
-    // Add the react plugin
-    react,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended rules
-    ...react.configs.recommended.rules,
-    ...react.configs['jsx-runtime'].rules,
-  },
-})
 ```
+PORT=5000
+MONGO_URI=your_mongodb_connection_string
+TMDB_API_KEY=your_tmdb_api_key
+```
+
+### 4️⃣ Run the application
+#### Start backend server
+```bash
+cd server
+npm run dev
+```
+#### Start frontend
+```bash
+cd client
+npm start
+```
+
+## 📌 API Endpoints
+| Method | Endpoint              | Description           |
+|--------|----------------------|----------------------|
+| GET    | /api/movies          | Fetch all movies     |
+| GET    | /api/movies/:id      | Get a movie by ID    |
+| POST   | /api/users/register  | Register a new user  |
+| POST   | /api/users/login     | Login a user         |
+| POST   | /api/watchlist       | Add movie to watchlist |
+| DELETE | /api/watchlist/:id   | Remove from watchlist |
+
+## 📷 Screenshots
+![Homepage](screenshots/home.png)
+![Movie Details](screenshots/movieinfo.png)
+![Bookmark list](screenshots/mylist.png)
+![Pages](screenshots/page.png)
+
+## 🤝 Contributing
+1. Fork the repository
+2. Create a new branch (`git checkout -b feature-branch`)
+3. Make your changes and commit (`git commit -m 'Add new feature'`)
+4. Push to your fork (`git push origin feature-branch`)
+5. Create a Pull Request
+
+## 📜 License
+This project is licensed under the **MIT License**.
+
+## ✨ Acknowledgements
+- [TMDB API](https://www.themoviedb.org/)
+- [MERN Stack Documentation](https://www.mongodb.com/mern-stack)
+
+---
+Made by [Kavindu Senesh](https://github.com/KavinduSenesh)
+
