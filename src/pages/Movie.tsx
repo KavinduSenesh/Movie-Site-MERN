@@ -19,7 +19,6 @@ function Movie() {
     const navigate = useNavigate();
     const dispatch = useDispatch();
     const [trailer, setTrailer] = useState<string | null>(null);
-
     const { genresLoaded } = useSelector((state: any) => state.movie);
 
     const TRANSFORMERS_ONE_ID = "698687";
@@ -33,16 +32,33 @@ function Movie() {
         if (genresLoaded) {
             dispatch(fetchMovies({ genres, type: 'all' }));  // Change 'movie' to the type you need
         }
-    }, [dispatch, genresLoaded]);
+    }, [dispatch, genresLoaded, genres]);
 
-    onAuthStateChanged(firebaseAuth, (currentUser) => {
-        if (!currentUser) navigate("/login");
-    });
+    useEffect(() => {
+        const unsubscribe = onAuthStateChanged(firebaseAuth, (currentUser) => {
+            if (!currentUser) navigate("/login");
+        });
+        return () => unsubscribe();
+    }, [navigate]);
 
-    window.onscroll = () => {
-        setIsScrolled(window.pageYOffset === 0 ? false : true);
-        return () => (window.onscroll = null);
-    };
+    useEffect(() => {
+        const handleScroll = () => {
+            setIsScrolled(window.pageYOffset !== 0);
+        };
+        window.addEventListener("scroll", handleScroll);
+        return () => {
+            window.removeEventListener("scroll", handleScroll);
+        };
+    }, []);
+
+    // onAuthStateChanged(firebaseAuth, (currentUser) => {
+    //     if (!currentUser) navigate("/login");
+    // });
+    //
+    // window.onscroll = () => {
+    //     setIsScrolled(window.pageYOffset === 0 ? false : true);
+    //     return () => (window.onscroll = null);
+    // };
 
     useEffect(() => {
         const fetchTrailer = async () => {

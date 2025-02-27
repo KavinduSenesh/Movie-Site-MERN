@@ -19,6 +19,22 @@ export default function LikedPage() {
         movies: []
     };
 
+    onAuthStateChanged(firebaseAuth, (currentUser) => {
+        if (currentUser) setEmail(currentUser.email);
+        else navigate("/login");
+    });
+
+    // useEffect(() => {
+    //     const unsubscribe = onAuthStateChanged(firebaseAuth, (currentUser) => {
+    //         if (currentUser) {
+    //             setEmail(currentUser.email);
+    //         } else {
+    //             navigate("/login");
+    //         }
+    //     });
+    //
+    //     return () => unsubscribe();
+    // }, [navigate]);
 
     useEffect(() => {
         if (email) {
@@ -26,15 +42,26 @@ export default function LikedPage() {
         }
     }, [email]);
 
-    window.onscroll = () => {
-        setIsScrolled(window.pageYOffset === 0 ? false : true);
-        return () => (window.onscroll = null);
-    };
+    // useEffect(() => {
+    //     const handleScroll = () => {
+    //         setIsScrolled(window.pageYOffset !== 0);
+    //     };
+    //
+    //     window.addEventListener("scroll", handleScroll);
+    //     return () => {
+    //         window.removeEventListener("scroll", handleScroll);
+    //     };
+    // }, []);
 
-    onAuthStateChanged(firebaseAuth, (currentUser) => {
-        if (currentUser) setEmail(currentUser.email);
-        else navigate("/login");
-    });
+    // window.onscroll = () => {
+    //     setIsScrolled(window.pageYOffset === 0 ? false : true);
+    //     return () => (window.onscroll = null);
+    // };
+    //
+    // onAuthStateChanged(firebaseAuth, (currentUser) => {
+    //     if (currentUser) setEmail(currentUser.email);
+    //     else navigate("/login");
+    // });
 
     return (
         <Container>

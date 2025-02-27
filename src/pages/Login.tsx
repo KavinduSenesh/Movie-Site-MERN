@@ -1,4 +1,4 @@
-import { useState } from "react";
+import {useEffect, useState} from "react";
 import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
 import BackgroundImage from "../components/BackgroundImage";
@@ -10,18 +10,43 @@ function Login() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const navigate = useNavigate();
+    const [error, setError] = useState<string | null>(null);
+    const [loading, setLoading] = useState(false);
+
+    // const handleLogin = async () => {
+    //     try {
+    //         await signInWithEmailAndPassword(firebaseAuth, email, password);
+    //     } catch (err) {
+    //         console.log(err);
+    //     }
+    // };
 
     const handleLogin = async () => {
+        setLoading(true);
+        setError(null); // Reset error state
+
         try {
             await signInWithEmailAndPassword(firebaseAuth, email, password);
-        } catch (err) {
-            console.log(err);
+        } catch (err: any) {
+            setError(err.message || "Failed to log in. Please try again.");
+        } finally {
+            setLoading(false);
         }
     };
 
-    onAuthStateChanged(firebaseAuth, (currentUser) => {
-        if (currentUser) navigate("/");
-    });
+    useEffect(() => {
+        const unsubscribe = onAuthStateChanged(firebaseAuth, (currentUser) => {
+            if (currentUser) {
+                navigate("/");
+            }
+        });
+
+        return () => unsubscribe(); // Cleanup function
+    }, [navigate]);
+
+    // onAuthStateChanged(firebaseAuth, (currentUser) => {
+    //     if (currentUser) navigate("/");
+    // });
 
     return (
         <Container>
@@ -34,6 +59,7 @@ function Login() {
                             <h3>Login</h3>
                         </div>
                         <div className="container flex column">
+                            {error && <p className="error">{error}</p>}
                             <input
                                 type="text"
                                 placeholder="Email"
@@ -46,7 +72,7 @@ function Login() {
                                 onChange={(e) => setPassword(e.target.value)}
                                 value={password}
                             />
-                            <button onClick={handleLogin}>Login to your account</button>
+                            <button onClick={handleLogin} disabled={loading}>Login to your account</button>
                         </div>
                     </div>
                 </div>

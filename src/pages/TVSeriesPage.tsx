@@ -14,31 +14,55 @@ export default function TVSeriesPage(){
     const genres = useSelector((state) => state.movie.genres);
     const movies = useSelector((state) => state.movie.movies);
     const genresLoaded = useSelector((state: any) => state.movie.genresLoaded);
+    const [user, setUser] = useState(undefined);
 
     const navigate = useNavigate();
     const dispatch = useDispatch();
 
     useEffect(() => {
-        if (!genres.length) dispatch(getGenres());
-    }, []);
+        if (!genres.length) {
+            dispatch(getGenres());
+        }
+    }, [dispatch, genres.length]);
+
+    useEffect(() => {
+        const unsubscribe = onAuthStateChanged(firebaseAuth, (currentUser) => {
+            if (currentUser) {
+                setUser(currentUser.uid);
+            } else {
+                navigate("/login");
+            }
+        });
+
+        return () => unsubscribe(); // Cleanup function
+    }, [navigate]);
 
     useEffect(() => {
         if (genresLoaded) {
-            dispatch(fetchMovies({genres, type: "tv"}));
+            dispatch(fetchMovies({ genres, type: "tv" }));
         }
-    }, [genresLoaded]);
+    }, [genresLoaded, dispatch, genres]);
 
-    const [user, setUser] = useState(undefined);
+    useEffect(() => {
+        const handleScroll = () => {
+            setIsScrolled(window.pageYOffset !== 0);
+        };
 
-    onAuthStateChanged(firebaseAuth, (currentUser) => {
-        if (currentUser) setUser(currentUser.uid);
-        else navigate("/login");
-    });
+        window.addEventListener("scroll", handleScroll);
+        return () => {
+            window.removeEventListener("scroll", handleScroll); // Cleanup function
+        };
+    }, []);
 
-    window.onscroll = () => {
-        setIsScrolled(window.pageYOffset === 0 ? false : true);
-        return () => (window.onscroll = null);
-    };
+    // onAuthStateChanged(firebaseAuth, (currentUser) => {
+    //     if (currentUser) setUser(currentUser.uid);
+    //     else navigate("/login");
+    // });
+
+    // window.onscroll = () => {
+    //     setIsScrolled(window.pageYOffset === 0 ? false : true);
+    //     return () => (window.onscroll = null);
+    // };
 
     return(
         <Container>

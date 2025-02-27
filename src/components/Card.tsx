@@ -90,6 +90,24 @@ export default React.memo(function Card({movieData, isLiked = false}: CardProps)
         }
     };
 
+    // const removeFromList = async () => {
+    //     try {
+    //         // Optionally, make an API call to remove the movie from the backend:
+    //         await axios.put("http://localhost:5000/api/user/remove", {
+    //             email,
+    //             data: movieData.id,
+    //         });
+    //         // Dispatch the action to update your Redux store:
+    //         dispatch(removeMovieFromLiked(movieData.id));
+    //         // Update local state:
+    //         setIsBookmarked(false);
+    //         setShowAlert(true);
+    //     } catch (error) {
+    //         console.error(error);
+    //     }
+    // };
+
+
     return(
         <Container
             onMouseEnter={() => setIsHovered(true)}
@@ -126,14 +144,19 @@ export default React.memo(function Card({movieData, isLiked = false}: CardProps)
                                         style={{ color: liked ? "green" : "white", cursor: "pointer" }}
                                     />
                                     <RiThumbDownFill
-                                        title={"Dislike"}
+                                         title={"Dislike"}
                                         onClick={handleDislike}
                                         style={{ color: disliked ? "red" : "white", cursor: "pointer" }}
                                     />
                                     {isBookmarked ? (
                                         <BsCheck
-                                            title={"Bookmarked"}
-                                            style={{ cursor: "default" }}
+                                            title={"Remove from list"}
+                                            onClick={() =>
+                                                dispatch(
+                                                    removeMovieFromLiked({ movieId: movieData.id, email })
+                                                )
+                                            }
+                                            style={{ cursor: "pointer" }}
                                         />
                                     ) : (
                                         <AiOutlinePlus
@@ -169,7 +192,7 @@ export default React.memo(function Card({movieData, isLiked = false}: CardProps)
                         <BsBookmarkPlus className="bookmark-icon" />
                         <div className="alert-text">
                             <h4>{movieData.name}</h4>
-                            <p>Added to your list!</p>
+                            <p>Removed from your list!</p>
                         </div>
                     </div>
                 </AlertContainer>

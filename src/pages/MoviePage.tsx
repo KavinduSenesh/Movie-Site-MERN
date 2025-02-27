@@ -25,19 +25,35 @@ export default function MoviePage(){
 
     useEffect(() => {
         if (genresLoaded) {
-            dispatch(fetchMovies({ type: 'movie' }));  // Change 'movie' to the type you need
+            dispatch(fetchMovies({ genres, type: 'movie' }));
         }
-    }, [dispatch, genresLoaded]);
+    }, [dispatch, genresLoaded, genres]);
 
-    window.onscroll = () => {
-        setIsScrolled(window.pageYOffset === 0 ? false : true);
-        return () => (window.onscroll = null);
-    };
+    // window.onscroll = () => {
+    //     setIsScrolled(window.pageYOffset === 0 ? false : true);
+    //     return () => (window.onscroll = null);
+    // };
 
-    onAuthStateChanged(firebaseAuth, (currentUser) => {
-        // if (currentUser) navigate("/");
-    });
+    // onAuthStateChanged(firebaseAuth, (currentUser) => {
+    //     // if (currentUser) navigate("/");
+    // });
 
+    useEffect(() => {
+        const unsubscribe = onAuthStateChanged(firebaseAuth, (currentUser) => {
+            if (!currentUser) navigate("/login");
+        });
+
+        return () => unsubscribe();
+    }, [navigate]);
+
+    useEffect(() => {
+        const handleScroll = () => {
+            setIsScrolled(window.pageYOffset !== 0);
+        };
+
+        window.addEventListener("scroll", handleScroll);
+        return () => window.removeEventListener("scroll", handleScroll);
+    }, []);
 
     return (
         <Container>
