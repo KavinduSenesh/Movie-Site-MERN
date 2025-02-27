@@ -72,7 +72,12 @@ function Login() {
                                 onChange={(e) => setPassword(e.target.value)}
                                 value={password}
                             />
-                            <button onClick={handleLogin} disabled={loading}>Login to your account</button>
+                            <button onClick={handleLogin} disabled={loading}>
+                                {loading ? "Logging in..." : "Login to your account"}
+                            </button>
+                            <div className="signup-link">
+                                Don't have an account? <span onClick={() => navigate("/signup")}>Sign up</span>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -83,41 +88,136 @@ function Login() {
 
 const Container = styled.div`
   position: relative;
+  height: 100vh;
+  width: 100vw;
+    
   .content {
     position: absolute;
     top: 0;
     left: 0;
     height: 100vh;
     width: 100vw;
-    background-color: rgba(0, 0, 0, 0.5);
+    background-color: rgba(0, 0, 0, 0.6);
+    display: grid;
     grid-template-rows: 15vh 85vh;
+      
     .form-container {
-      gap: 2rem;
-      height: 85vh;
-      .form {
-        padding: 2rem;
-        background-color: #000000b0;
-        width: 25vw;
-        gap: 2rem;
-        color: white;
-        .container {
-          gap: 2rem;
-          input {
-            padding: 0.5rem 1rem;
-            width: 15rem;
-          }
-          button {
-            padding: 0.5rem 1rem;
-            background-color: #e50914;
-            border: none;
-            cursor: pointer;
+       display: flex;
+       flex-direction: column;
+       align-items: center;
+       justify-content: center;
+       gap: 2rem;
+       height: 85vh;
+
+        .form {
+            padding: 2.5rem;
+            background-color: rgba(0, 0, 0, 0.85);
+            width: 25vw;
+            border-radius: 0.5rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 2rem;
             color: white;
-            border-radius: 0.2rem;
-            font-weight: bolder;
-            font-size: 1.05rem;
-          }
+            box-shadow: 0 15px 25px rgba(0, 0, 0, 0.6);
+            transition: transform 0.3s ease;
+
+            &:hover {
+                transform: translateY(-5px);
+            }
+
+            .title {
+                h3 {
+                    font-size: 2rem;
+                    font-weight: 600;
+                    color: #e50914;
+                    margin-bottom: 1rem;
+                }
+            }
+
+            .container {
+                display: flex;
+                flex-direction: column;
+                gap: 1.5rem;
+                width: 100%;
+
+                .error {
+                    padding: 0.7rem;
+                    background-color: rgba(255, 0, 0, 0.2);
+                    border: 1px solid #e50914;
+                    border-radius: 0.3rem;
+                    color: white;
+                    text-align: center;
+                }
+
+                input {
+                    padding: 1rem;
+                    width: 100%;
+                    border-radius: 0.3rem;
+                    border: none;
+                    background-color: #333;
+                    color: white;
+                    font-size: 1rem;
+                    transition: all 0.3s;
+
+                    &:focus {
+                        outline: none;
+                        background-color: #454545;
+                    }
+
+                    &::placeholder {
+                        color: #aaa;
+                    }
+                }
+
+                button {
+                    padding: 1rem;
+                    background-color: #e50914;
+                    border: none;
+                    cursor: pointer;
+                    color: white;
+                    border-radius: 0.3rem;
+                    font-weight: 600;
+                    font-size: 1.05rem;
+                    transition: all 0.3s;
+                    width: 100%;
+
+                    &:hover {
+                        background-color: #f40612;
+                        transform: scale(1.02);
+                    }
+
+                    &:disabled {
+                        background-color: #99373b;
+                        cursor: not-allowed;
+                    }
+                }
+
+                .signup-link {
+                    text-align: center;
+                    margin-top: 0.5rem;
+                    color: #aaa;
+
+                    span {
+                        color: #e50914;
+                        cursor: pointer;
+                        font-weight: 500;
+                        margin-left: 0.5rem;
+
+                        &:hover {
+                            text-decoration: underline;
+                        }
+                    }
+                }
+            }
         }
-      }
+
+        @media (max-width: 768px) {
+            .form {
+                width: 80vw;
+            }
+        }
     }
   }
 `;
