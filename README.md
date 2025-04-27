@@ -83,5 +83,5 @@ This project is licensed under the **MIT License**.
 - [MERN Stack Documentation](https://www.mongodb.com/mern-stack)
 
 ---
-Made by [Kavindu Senesh](https://github.com/KavinduSenesh)
+Made by @[Kavindu Senesh](https://github.com/KavinduSenesh)
 
